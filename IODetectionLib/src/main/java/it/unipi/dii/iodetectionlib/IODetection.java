@@ -19,6 +19,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.WifiManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -35,6 +36,7 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import it.unipi.dii.iodetectionlib.ml.Model;
 
@@ -210,7 +212,7 @@ public class IODetection implements SensorEventListener, LocationListener
 		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(fv.length * 4);
 		for (float f : fv) {
 			if (Float.isNaN(f)) {
-				Log.i(TAG, "get: NON ANCORA PRONTO");
+				Log.i(TAG, "get: NON ANCORA PRONTO " + Arrays.toString(fv));
 				return true;
 			}
 			byteBuffer.putFloat(f);
@@ -249,6 +251,24 @@ public class IODetection implements SensorEventListener, LocationListener
 
 	@Override
 	public void onLocationChanged(@NonNull Location location)
+	{
+
+	}
+
+	@Override
+	public void onStatusChanged(String provider, int status, Bundle extras)
+	{
+
+	}
+
+	@Override
+	public void onProviderEnabled(@NonNull String provider)
+	{
+
+	}
+
+	@Override
+	public void onProviderDisabled(@NonNull String provider)
 	{
 
 	}

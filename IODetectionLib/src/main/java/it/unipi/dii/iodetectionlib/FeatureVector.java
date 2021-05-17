@@ -12,6 +12,13 @@ import static com.google.android.gms.location.DetectedActivity.WALKING;
 
 public class FeatureVector
 {
+	private final static float BLUETOOTH_DEVICE_MAX = 62;
+	private final static float WIFI_AP_MAX = 43;
+	private final static long GPS_FIX_MAX = 39127094;
+	private final static float GPS_FIX_SATELLITES_MAX = 24;
+	private final static float GPS_SATELLITES_MAX = 45;
+	private final static float LIGHT_MAX = 216734;
+
 	private float lightIntensity = Float.NaN;
 	private float proximity = Float.NaN;
 	private float devicesBLT = Float.NaN;
@@ -74,6 +81,9 @@ public class FeatureVector
 
 	public void setGPSFixSatellites(float GPSFixSatellites)
 	{
+		if(GPSFixSatellites > GPS_FIX_SATELLITES_MAX){
+			GPSFixSatellites = GPS_FIX_SATELLITES_MAX;
+		}
 		this.GPSFixSatellites = GPSFixSatellites;
 	}
 
@@ -84,6 +94,9 @@ public class FeatureVector
 
 	public void setLightIntensity(float lightIntensity)
 	{
+		if(lightIntensity > LIGHT_MAX){
+			lightIntensity = LIGHT_MAX;
+		}
 		this.lightIntensity = lightIntensity;
 	}
 
@@ -108,6 +121,9 @@ public class FeatureVector
 
 	public void setDevicesBLT(float devicesBLT)
 	{
+		if(devicesBLT > BLUETOOTH_DEVICE_MAX){
+			devicesBLT = BLUETOOTH_DEVICE_MAX;
+		}
 		this.devicesBLT = devicesBLT;
 	}
 
@@ -118,6 +134,9 @@ public class FeatureVector
 
 	public void setDevicesWiFi(float devicesWiFi)
 	{
+		if(devicesWiFi > WIFI_AP_MAX){
+			devicesWiFi = WIFI_AP_MAX;
+		}
 		this.devicesWiFi = devicesWiFi;
 	}
 
@@ -128,6 +147,9 @@ public class FeatureVector
 
 	public void setGPSSatellites(float GPSSatellites)
 	{
+		if(GPSSatellites > GPS_SATELLITES_MAX){
+			GPSSatellites = GPS_SATELLITES_MAX;
+		}
 		this.GPSSatellites = GPSSatellites;
 	}
 
@@ -135,7 +157,11 @@ public class FeatureVector
 	{
 		if (timestampGPSLastFix == null)
 			return null;
-		return System.currentTimeMillis() - timestampGPSLastFix;
+		long tmp = System.currentTimeMillis() - timestampGPSLastFix;
+		if(tmp > GPS_FIX_MAX){
+			tmp = GPS_FIX_MAX;
+		}
+		return tmp;
 	}
 
 	public void setTimestampGPSLastFix(Long timestampGPSLastFix)
@@ -202,12 +228,12 @@ public class FeatureVector
 		float lastFix = Float.POSITIVE_INFINITY;
 		if (timestampGPSLastFix != null)
 			lastFix = (float) getTimestampGPSLastFix();
-		result[0] = getDevicesBLT();
-		result[1] = lastFix;
-		result[2] = getGPSFixSatellites();
-		result[3] = getGPSSatellites();
-		result[4] = getLightIntensity();
-		result[5] = getDevicesWiFi();
+		result[0] = getDevicesBLT()/BLUETOOTH_DEVICE_MAX;
+		result[1] = lastFix/GPS_FIX_MAX;
+		result[2] = getGPSFixSatellites()/GPS_FIX_SATELLITES_MAX;
+		result[3] = getGPSSatellites()/GPS_SATELLITES_MAX;
+		result[4] = getLightIntensity()/LIGHT_MAX;
+		result[5] = getDevicesWiFi()/WIFI_AP_MAX;
 		result[6] = isNight();
 		result[7] = isTwilight();
 		result[8] = isDaylight();
