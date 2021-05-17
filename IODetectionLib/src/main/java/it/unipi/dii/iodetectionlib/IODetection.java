@@ -202,6 +202,8 @@ public class IODetection implements SensorEventListener, LocationListener {
     public boolean get() {
 
         float[] fv = featureVector.getFeatureVector();
+        if (fv.length == 0)
+            return true;
         ByteBuffer byteBuffer = ByteBuffer.allocateDirect(fv.length * 4);
         for(float f : fv){
             if(Float.isNaN(f)){

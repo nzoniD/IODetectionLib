@@ -111,6 +111,8 @@ public class FeatureVector {
     }
 
     public Long getTimestampGPSLastFix() {
+        if (timestampGPSLastFix == null)
+            return null;
         return System.currentTimeMillis() - timestampGPSLastFix;
     }
 
@@ -156,8 +158,25 @@ public class FeatureVector {
 
     public float[] getFeatureVector(){
         float result[] = new float[17];
+        if (Float.isNaN(lightIntensity))
+            lightIntensity = 0.0f;
+        if (Float.isNaN(proximity))
+            proximity = 1.0f;
+        if (Float.isNaN(devicesBLT))
+            devicesBLT = 0.0f;
+        if (Float.isNaN(devicesWiFi))
+            devicesWiFi = 0.0f;
+        if (Float.isNaN(GPSFixSatellites))
+            GPSFixSatellites = 0.0f;
+        if (Float.isNaN(GPSSatellites))
+            GPSSatellites = 0.0f;
+        if (Float.isNaN(In_Vehicle))
+            resetActivity();
+        float lastFix = Float.POSITIVE_INFINITY;
+        if (timestampGPSLastFix != null)
+            lastFix = (float)getTimestampGPSLastFix();
         result[0] = getDevicesBLT();
-        result[1] = (float)getTimestampGPSLastFix();
+        result[1] = lastFix;
         result[2] = getGPSFixSatellites();
         result[3] = getGPSSatellites();
         result[4] = getLightIntensity();
