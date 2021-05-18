@@ -1,9 +1,12 @@
-<mxfile host="app.diagrams.net" modified="2021-05-18T14:26:21.842Z" agent="5.0 (X11)" etag="BtTTPmbAcBdYeLxDI5rD" version="14.6.13" type="github">
+<mxfile host="app.diagrams.net" modified="2021-05-18T15:45:50.935Z" agent="5.0 (X11)" etag="XGrf68Ja4NPo2c8yw-U4" version="14.6.13" type="github">
   <diagram id="C5RBs43oDa-KdzZeNtuy" name="class diagram">
     <mxGraphModel dx="2241" dy="1929" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
         <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="UUu3Lhf3KyLz21ft7dTG-47" value="collectors" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=80;tabHeight=20;tabPosition=left;html=1;labelPosition=left;verticalLabelPosition=top;align=right;verticalAlign=bottom;spacing=-17;spacingRight=-51;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="1868" y="570" width="602" height="220" as="geometry" />
+        </mxCell>
         <mxCell id="q5nNlz1uzhoJ1SYgGgT--0" value="IODetector" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
           <mxGeometry x="500" y="60" width="670" height="528" as="geometry" />
         </mxCell>
@@ -855,6 +858,15 @@
             <mxPoint x="2000" y="83.76363636363658" as="sourcePoint" />
             <mxPoint x="1725" y="156.76363636363658" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="UUu3Lhf3KyLz21ft7dTG-46" value="receivers" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=82;tabHeight=20;tabPosition=left;html=1;labelPosition=left;verticalLabelPosition=top;align=right;verticalAlign=bottom;spacing=-17;spacingRight=-51;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="1910" y="600" width="122" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="UUu3Lhf3KyLz21ft7dTG-48" value="scanners" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=82;tabHeight=20;tabPosition=left;html=1;labelPosition=left;verticalLabelPosition=top;align=right;verticalAlign=bottom;spacing=-17;spacingRight=-51;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="2100" y="610" width="122" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="UUu3Lhf3KyLz21ft7dTG-49" value="ml" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=20;tabPosition=left;html=1;labelPosition=left;verticalLabelPosition=top;align=right;verticalAlign=bottom;spacing=-17;spacingRight=-11;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="2290" y="660" width="122" height="90" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
