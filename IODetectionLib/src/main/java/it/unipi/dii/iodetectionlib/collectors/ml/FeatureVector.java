@@ -114,6 +114,12 @@ public class FeatureVector
 			float value = 0.0f;
 			if (feature != null)
 				value = feature.getNormalizedValue();
+			else
+				Log.i(TAG, "Feature " + id.name() + " not available. Forcing to 0.");
+			if (!Float.isFinite(value)) {
+				Log.w(TAG, "Non finite value (" + value + ") in normalized vector for feature " + id.name() + ". Forcing to 0.5.");
+				value = 0.5f;
+			}
 			vector[index] = value;
 			index++;
 		}

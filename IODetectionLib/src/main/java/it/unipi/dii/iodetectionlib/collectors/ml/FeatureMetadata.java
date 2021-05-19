@@ -1,6 +1,6 @@
 package it.unipi.dii.iodetectionlib.collectors.ml;
 
-class FeatureMetadata
+public class FeatureMetadata
 {
 	//TODO
 	public static final int MAX_WIFI_ACCESS_POINTS = 100;
@@ -13,6 +13,11 @@ class FeatureMetadata
 	public static final int MAX_LUMINOSITY30S = 32767;
 	public static final int MAX_LAST_LUMINOSITY30S_WHEN_FAR = 32767;
 	public static final int MAX_LAST_LUMINOSITY_WHEN_FAR = 32767;
+
+	public static void setModelMetadata()
+	{
+
+	}
 
 	public static int getMaxValue(FeatureId featureId)
 	{

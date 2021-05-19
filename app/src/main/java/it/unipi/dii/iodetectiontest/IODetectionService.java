@@ -93,6 +93,9 @@ public class IODetectionService extends Service implements IODetectionListener
 
 		Intent i = new Intent(IODetectionAction);
 		i.putExtra("iostatus", result.getIOStatus());
+		i.putExtra("confidence", result.getConfidence());
+		i.putExtra("validated_iostatus", result.getValidatedIOStatus());
+		i.putExtra("validated_confidence", result.getValidatedConfidence());
 		getApplicationContext().sendBroadcast(i);
 	}
 }

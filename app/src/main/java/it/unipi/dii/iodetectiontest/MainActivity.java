@@ -1,5 +1,6 @@
 package it.unipi.dii.iodetectiontest;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -16,7 +17,6 @@ import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +32,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 	private static final String TAG = MainActivity.class.getName();
 	private final BroadcastReceiver ioReceiver = new BroadcastReceiver()
 	{
+		@SuppressLint("SetTextI18n")
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
 			TextView tv = findViewById(R.id.io);
+			TextView validatedTv = findViewById(R.id.validatedIo);
 			IOStatus status = (IOStatus)intent.getSerializableExtra("iostatus");
+			float confidence = intent.getFloatExtra("confidence", Float.NaN);
+			IOStatus validatedStatus = (IOStatus)intent.getSerializableExtra("validated_iostatus");
+			float validatedConfidence = intent.getFloatExtra("validated_confidence", Float.NaN);
 			if (status == null)
 				status = IOStatus.UNKNOWN;
-			tv.setText(status.toString());
+			if (validatedStatus == null)
+				validatedStatus = IOStatus.UNKNOWN;
+			tv.setText(status + " (" + confidence + ")");
+			validatedTv.setText(validatedStatus + " (" + validatedConfidence + ")");
 		}
 	};
 
