@@ -23,7 +23,7 @@
             android:name=".IODetectionService"
             android:enabled="true"
             android:exported="false" />
-        <service android:name="it.unipi.dii.iodetectionlib.DetectedActivitiesIntentService"/>
+        <service android:name="it.unipi.dii.iodetectionlib.collectors.receivers.ActivityReceiver"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

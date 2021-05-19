@@ -11,18 +11,22 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-import it.unipi.dii.iodetectionlib.IODetection;
+import java.io.IOException;
 
-public class IODetectionService extends Service
+import it.unipi.dii.iodetectionlib.IODetectionListener;
+import it.unipi.dii.iodetectionlib.IODetectionResult;
+import it.unipi.dii.iodetectionlib.IODetector;
+
+public class IODetectionService extends Service implements IODetectionListener
 {
 
 	private static final String TAG = IODetectionService.class.getName();
 	private static final long WAKELOCK_TIMEOUT = 2 * 60 * 1000;
-	private static final long PERIODIC_DELAY = 5000;
-	public static String IODetectionAction = "it.unipi.dii.iodetectionlib.detect_io";
+	private static final long DETECT_INTERVAL = 5 * 1000;
+	public static String IODetectionAction = "it.unipi.dii.iodetectiontest.detection_result";
 	Handler periodicHandler = null;
 	Runnable periodicRunnable = null;
-	IODetection ioDetection = null;
+	IODetector detector = null;
 
 	private PowerManager.WakeLock mWakeLock;
 
@@ -30,34 +34,36 @@ public class IODetectionService extends Service
 	public void onCreate()
 	{
 		super.onCreate();
+		try {
+			detector = new IODetector(getApplicationContext());
+		} catch (IOException ex) {
+			Log.e(TAG, "Can not initialize IODetector: " + ex.getMessage());
+			stopSelf();
+			return;
+		}
 		startForeground(NotificationCreator.getNotificationId(), NotificationCreator.getNotification(this));
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
-		ioDetection = new IODetection(getApplicationContext());
-		/*-------------------------------------------*/
 		periodicHandler = new Handler(Looper.getMainLooper());
 		periodicRunnable = new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				periodicHandler.postDelayed(this, PERIODIC_DELAY);
-				boolean indoor = ioDetection.get();
-				Intent i = new Intent(IODetectionAction);
-				i.putExtra("indoor", indoor);
-				Log.d(TAG, "SEND BROADCAST");
-				getApplicationContext().sendBroadcast(i);
-				if (!mWakeLock.isHeld())
-					mWakeLock.acquire(WAKELOCK_TIMEOUT);
+				periodicHandler.postDelayed(this, WAKELOCK_TIMEOUT - 5*1000);
+				if (mWakeLock.isHeld())
+					mWakeLock.release();
+				mWakeLock.acquire(WAKELOCK_TIMEOUT);
 			}
 		};
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TAG);
 		mWakeLock.acquire(WAKELOCK_TIMEOUT);
-		periodicHandler.postDelayed(periodicRunnable, 1);
+		periodicHandler.postDelayed(periodicRunnable, WAKELOCK_TIMEOUT - 5*1000);
+		detector.registerIODetectionListener(this, DETECT_INTERVAL);
 		return START_STICKY;
 	}
 
@@ -72,11 +78,21 @@ public class IODetectionService extends Service
 	@Override
 	public void onDestroy()
 	{
-		if (mWakeLock != null && mWakeLock.isHeld())
-			mWakeLock.release();
-		ioDetection.stop();
 		if (periodicHandler != null && periodicRunnable != null)
 			periodicHandler.removeCallbacks(periodicRunnable);
+		if (detector != null)
+			detector.close();
+		if (mWakeLock != null && mWakeLock.isHeld())
+			mWakeLock.release();
 		super.onDestroy();
+	}
+
+	@Override
+	public void onDetectionChange(IODetectionResult result)
+	{
+
+		Intent i = new Intent(IODetectionAction);
+		i.putExtra("iostatus", result.getIOStatus());
+		getApplicationContext().sendBroadcast(i);
 	}
 }
