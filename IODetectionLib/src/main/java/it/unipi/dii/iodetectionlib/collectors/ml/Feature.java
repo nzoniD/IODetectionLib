@@ -21,17 +21,6 @@ public class Feature
 		return value;
 	}
 
-	public float getNormalizedValue()
-	{
-		try {
-			float max = (float)FeatureMetadata.getMaxValue(id);
-			float value = getValue();
-			return value > max ? max : (value/max);
-		} catch (IllegalArgumentException ex) {
-			return getValue();
-		}
-	}
-
 	public String toString()
 	{
 		return "id: " + id.name() + " " + value;

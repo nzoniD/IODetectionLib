@@ -40,12 +40,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 			TextView validatedTv = findViewById(R.id.validatedIo);
 			IOStatus status = (IOStatus)intent.getSerializableExtra("iostatus");
 			float confidence = intent.getFloatExtra("confidence", Float.NaN);
+			float raw = intent.getFloatExtra("raw", Float.NaN);
 			IOStatus validatedStatus = (IOStatus)intent.getSerializableExtra("validated_iostatus");
 			float validatedConfidence = intent.getFloatExtra("validated_confidence", Float.NaN);
+			float validatedRaw = intent.getFloatExtra("validated_raw", Float.NaN);
 			if (status == null)
 				status = IOStatus.UNKNOWN;
 			if (validatedStatus == null)
 				validatedStatus = IOStatus.UNKNOWN;
+			if (status == IOStatus.UNKNOWN)
+				confidence = raw;
+			if (validatedStatus == IOStatus.UNKNOWN)
+				validatedConfidence = validatedRaw;
 			tv.setText(status + " (" + confidence + ")");
 			validatedTv.setText(validatedStatus + " (" + validatedConfidence + ")");
 		}

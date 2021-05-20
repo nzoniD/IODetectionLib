@@ -40,7 +40,7 @@ public class ActivityCollector extends FeatureCollector implements OnActivityUpd
 	public void start()
 	{
 		assertPermissions(getRequiredPermissions());
-		Task<Void> task = recognitionClient.requestActivityUpdates(this.interval, pendingIntent);
+		Task<Void> task = recognitionClient.requestActivityUpdates(this.interval, pendingIntent); // FIXME: not working !! ActivityReceiver not called
 		task.addOnSuccessListener(result -> {});
 		task.addOnFailureListener(e -> Log.w(TAG, "Activity Recognition Client failure: " + e.toString()));
 	}
@@ -56,10 +56,7 @@ public class ActivityCollector extends FeatureCollector implements OnActivityUpd
 	{
 		FeatureId curId = FeatureId.fromDetectedActivity(activity);
 		for (FeatureId id: ACTIVITY_FEATURE_IDS)
-			if (id == curId)
-				collect(new Feature(curId, 1.0f));
-			else
-				collect(new Feature(id, 0.0f));
+			collect(new Feature(id, id == curId ? 1.0f : 0.0f));
 
 	}
 

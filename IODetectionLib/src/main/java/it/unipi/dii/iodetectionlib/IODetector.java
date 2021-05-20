@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.util.Log;
 
 import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.support.label.Category;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.Closeable;
@@ -23,7 +24,7 @@ import it.unipi.dii.iodetectionlib.collectors.SensorCollector;
 import it.unipi.dii.iodetectionlib.collectors.WifiCollector;
 import it.unipi.dii.iodetectionlib.collectors.ml.FeatureId;
 import it.unipi.dii.iodetectionlib.collectors.ml.FeatureVector;
-import it.unipi.dii.iodetectionlib.ml.Model;
+import it.unipi.dii.iodetectionlib.ml.IODetectorModel;
 
 public class IODetector implements Closeable
 {
@@ -31,7 +32,7 @@ public class IODetector implements Closeable
 	private final List<FeatureCollector> collectors;
 	private final FeatureVector featureVector;
 	private IODetectionResult oldResult;
-	private final Model model;
+	private final IODetectorModel model;
 	private Handler periodicHandler;
 	private Runnable periodicRunnable;
 	private boolean started = false;
@@ -40,7 +41,7 @@ public class IODetector implements Closeable
 	{
 		featureVector = new FeatureVector();
 		try {
-			model = Model.newInstance(context);
+			model = IODetectorModel.newInstance(context);
 		} catch (IOException ex) {
 			Log.e(TAG, "Error loading TensorFlow module: " + ex.getMessage());
 			throw ex;
@@ -113,14 +114,14 @@ public class IODetector implements Closeable
 		TensorBuffer inputFeatures = TensorBuffer.createFixedSize(new int[]{1, FeatureId.values().length}, DataType.FLOAT32);
 		inputFeatures.loadBuffer(buffer);
 
-		Model.Outputs outputs = model.process(inputFeatures);
-		TensorBuffer outputFeature = outputs.getOutputFeature0AsTensorBuffer();
-		float output = outputFeature.getFloatArray()[0];
+		IODetectorModel.Outputs outputs = model.process(inputFeatures);
+		TensorBuffer output = outputs.getIODetectionAsTensorBuffer();
+		float value = output.getFloatValue(0);
 		IODetectionResult tmp = oldResult;
 		if (tmp == null)
-			oldResult = new IODetectionResult(output);
+			oldResult = new IODetectionResult(value);
 		else
-			oldResult = new IODetectionResult(output, tmp);
+			oldResult = new IODetectionResult(value, tmp);
 		Log.d(TAG, "DETECTION RESULT: " + oldResult);
 		return oldResult;
 	}

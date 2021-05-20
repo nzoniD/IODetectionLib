@@ -103,7 +103,7 @@ public class FeatureVector
 		return features.containsKey(FeatureId.LUMINOSITY) && features.containsKey(FeatureId.PROXIMITY);
 	}
 
-	public float[] getNormalizedVector()
+	public float[] getFloatVector()
 	{
 		if (!hasRequiredFeatures())
 			throw new IllegalStateException("Required features not still available.");
@@ -113,7 +113,7 @@ public class FeatureVector
 			Feature feature = features.get(id);
 			float value = 0.0f;
 			if (feature != null)
-				value = feature.getNormalizedValue();
+				value = feature.getValue();
 			else
 				Log.i(TAG, "Feature " + id.name() + " not available. Forcing to 0.");
 			if (!Float.isFinite(value)) {
@@ -129,7 +129,7 @@ public class FeatureVector
 	public ByteBuffer toByteBuffer()
 	{
 		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(FeatureId.values().length * (Float.SIZE/8));
-		float[] vector = getNormalizedVector();
+		float[] vector = getFloatVector();
 		for (float value: vector)
 			byteBuffer.putFloat(value);
 		return byteBuffer;
