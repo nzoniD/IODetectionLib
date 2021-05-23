@@ -15,7 +15,6 @@ import it.unipi.dii.iodetectionlib.ml.IODetectorModel;
 
 public class FeatureVector
 {
-	private final IODetectorModel ioDetectorModel;
 	private final static float[] meanFeature = new float[] {2055.967f,2042.2388f,2889.998f,3765.9392f,516.74365f,3.1199863f,3.1646147f,12.936724f,8.249018f,663.32623f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
 
 
@@ -73,9 +72,8 @@ public class FeatureVector
 
 	private final HashMap<FeatureId, Feature> features;
 
-	public FeatureVector(IODetectorModel ioDetectorModel)
+	public FeatureVector()
 	{
-		this.ioDetectorModel = ioDetectorModel;
 		features = new HashMap<>(FeatureId.values().length, 1);
 	}
 
@@ -114,7 +112,6 @@ public class FeatureVector
 
 	public float[] getFloatVector()
 	{
-		// this.ioDetectorModel.
 		if (!hasRequiredFeatures())
 			throw new IllegalStateException("Required features not still available.");
 		float[] vector = new float[FeatureId.values().length];

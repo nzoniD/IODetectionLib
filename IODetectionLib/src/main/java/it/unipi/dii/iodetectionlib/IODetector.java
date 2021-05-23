@@ -45,7 +45,7 @@ public class IODetector implements Closeable
 			Log.e(TAG, "Error loading TensorFlow module: " + ex.getMessage());
 			throw ex;
 		}
-		featureVector = new FeatureVector(model);
+		featureVector = new FeatureVector();
 		collectors = Arrays.asList(
 			new SensorCollector(context, samplingPeriod, featureVector),
 			new WifiCollector(context, scanInterval, featureVector),
