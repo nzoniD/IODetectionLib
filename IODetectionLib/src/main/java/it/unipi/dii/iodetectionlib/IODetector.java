@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.util.Log;
 
 import org.tensorflow.lite.DataType;
-import org.tensorflow.lite.support.label.Category;
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.Closeable;
@@ -39,13 +38,14 @@ public class IODetector implements Closeable
 
 	public IODetector(Context context, int samplingPeriod, long scanInterval, long activityInterval, long gpsInterval) throws IOException
 	{
-		featureVector = new FeatureVector();
+
 		try {
 			model = IODetectorModel.newInstance(context);
 		} catch (IOException ex) {
 			Log.e(TAG, "Error loading TensorFlow module: " + ex.getMessage());
 			throw ex;
 		}
+		featureVector = new FeatureVector(model);
 		collectors = Arrays.asList(
 			new SensorCollector(context, samplingPeriod, featureVector),
 			new WifiCollector(context, scanInterval, featureVector),

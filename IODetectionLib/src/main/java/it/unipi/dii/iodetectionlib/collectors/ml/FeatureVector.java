@@ -2,6 +2,8 @@ package it.unipi.dii.iodetectionlib.collectors.ml;
 
 import android.util.Log;
 
+import org.tensorflow.lite.support.model.Model;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -9,8 +11,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.unipi.dii.iodetectionlib.ml.IODetectorModel;
+
 public class FeatureVector
 {
+	private final IODetectorModel ioDetectorModel;
+	private final static float[] meanFeature = new float[] {2055.967f,2042.2388f,2889.998f,3765.9392f,516.74365f,3.1199863f,3.1646147f,12.936724f,8.249018f,663.32623f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
+
+
 	private static class TimeRange
 	{
 		private final FeatureId featureId;
@@ -65,8 +73,9 @@ public class FeatureVector
 
 	private final HashMap<FeatureId, Feature> features;
 
-	public FeatureVector()
+	public FeatureVector(IODetectorModel ioDetectorModel)
 	{
+		this.ioDetectorModel = ioDetectorModel;
 		features = new HashMap<>(FeatureId.values().length, 1);
 	}
 
@@ -105,13 +114,14 @@ public class FeatureVector
 
 	public float[] getFloatVector()
 	{
+		// this.ioDetectorModel.
 		if (!hasRequiredFeatures())
 			throw new IllegalStateException("Required features not still available.");
 		float[] vector = new float[FeatureId.values().length];
 		int index = 0;
 		for (FeatureId id: FeatureId.values()) {
 			Feature feature = features.get(id);
-			float value = 0.0f;
+			float value = meanFeature[index];
 			if (feature != null)
 				value = feature.getValue();
 			else
