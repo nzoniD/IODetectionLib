@@ -16,6 +16,7 @@ import it.unipi.dii.iodetectionlib.collectors.ml.FeatureVector;
 import it.unipi.dii.iodetectionlib.collectors.receivers.ActivityReceiver;
 import it.unipi.dii.iodetectionlib.collectors.receivers.interfaces.OnActivityUpdateListener;
 
+/* Collects the user activity */
 public class ActivityCollector extends FeatureCollector implements OnActivityUpdateListener
 {
 	private static final String TAG = ActivityCollector.class.getName();
@@ -36,11 +37,12 @@ public class ActivityCollector extends FeatureCollector implements OnActivityUpd
 		pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 	}
 
+	/* Register the activity receiver */
 	@Override
 	public void start()
 	{
 		assertPermissions(getRequiredPermissions());
-		Task<Void> task = recognitionClient.requestActivityUpdates(this.interval, pendingIntent); // FIXME: not working !! ActivityReceiver not called
+		Task<Void> task = recognitionClient.requestActivityUpdates(this.interval, pendingIntent);
 		task.addOnSuccessListener(result -> {});
 		task.addOnFailureListener(e -> Log.w(TAG, "Activity Recognition Client failure: " + e.toString()));
 	}
@@ -51,6 +53,7 @@ public class ActivityCollector extends FeatureCollector implements OnActivityUpd
 		recognitionClient.removeActivityUpdates(pendingIntent);
 	}
 
+	/* Called by ActivityReceiver */
 	@Override
 	public void onActivityUpdate(int activity)
 	{

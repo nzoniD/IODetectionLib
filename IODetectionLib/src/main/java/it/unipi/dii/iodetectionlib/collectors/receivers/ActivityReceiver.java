@@ -15,6 +15,7 @@ import java.util.List;
 
 import it.unipi.dii.iodetectionlib.collectors.receivers.interfaces.OnActivityUpdateListener;
 
+/* Receives user activity updates from Android */
 public class ActivityReceiver extends IntentService
 {
 	private static OnActivityUpdateListener callbackListener;
@@ -35,34 +36,11 @@ public class ActivityReceiver extends IntentService
 		ActivityReceiver.callbackListener = callbackListener;
 	}
 
-	/*
-	@Override
-	protected void onHandleWork(@NonNull Intent intent)
-	{
-		if (callbackListener == null)
-			return;
-		ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
-		if (result == null)
-			return;
-		List<DetectedActivity> activities = result.getProbableActivities();
-		if (!activities.isEmpty()) {
-			int activity = activities.get(0).getType();
-			if (activity != lastActivity) {
-				lastActivity = activity;
-				callbackListener.onActivityUpdate(activity);
-			}
-		}
-	}
-	"*/
-
 	@Override
 	protected void onHandleIntent(@Nullable Intent intent)
 	{
-		if(intent == null)
+		if(intent == null || callbackListener == null)
 			return;
-		if (callbackListener == null)
-			return;
-		Log.i(TAG, "onHandleIntent: ");
 		ActivityRecognitionResult result = ActivityRecognitionResult.extractResult(intent);
 		if (result == null)
 			return;
@@ -71,6 +49,7 @@ public class ActivityReceiver extends IntentService
 			int activity = activities.get(0).getType();
 			if (activity != lastActivity) {
 				lastActivity = activity;
+				/* Callback to the collector if activity has changed */
 				callbackListener.onActivityUpdate(activity);
 			}
 		}

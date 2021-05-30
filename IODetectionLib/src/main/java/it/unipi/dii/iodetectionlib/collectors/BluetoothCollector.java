@@ -14,6 +14,7 @@ import it.unipi.dii.iodetectionlib.collectors.receivers.BluetoothCounterReceiver
 import it.unipi.dii.iodetectionlib.collectors.receivers.interfaces.OnCounterUpdateListener;
 import it.unipi.dii.iodetectionlib.collectors.scanners.BluetoothScanner;
 
+/* Collects the number of BT devices found */
 public class BluetoothCollector extends FeatureCollector implements OnCounterUpdateListener
 {
 	private final BluetoothScanner scanner;
@@ -29,6 +30,7 @@ public class BluetoothCollector extends FeatureCollector implements OnCounterUpd
 		bluetoothReceiver = new BluetoothCounterReceiver(this);
 	}
 
+	/* Called by BluetoothCounterReiceiver */
 	@Override
 	public void onCounterUpdate(int value)
 	{

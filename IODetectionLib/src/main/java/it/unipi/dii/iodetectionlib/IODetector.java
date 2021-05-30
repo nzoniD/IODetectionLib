@@ -23,6 +23,7 @@ import it.unipi.dii.iodetectionlib.collectors.SensorCollector;
 import it.unipi.dii.iodetectionlib.collectors.WifiCollector;
 import it.unipi.dii.iodetectionlib.collectors.ml.FeatureId;
 import it.unipi.dii.iodetectionlib.collectors.ml.FeatureVector;
+import it.unipi.dii.iodetectionlib.collectors.ml.Metadata;
 import it.unipi.dii.iodetectionlib.ml.IODetectorModel;
 
 public class IODetector implements Closeable
@@ -38,14 +39,15 @@ public class IODetector implements Closeable
 
 	public IODetector(Context context, int samplingPeriod, long scanInterval, long activityInterval, long gpsInterval) throws IOException
 	{
-
+		Metadata metadata;
 		try {
 			model = IODetectorModel.newInstance(context);
+			metadata = Metadata.createModelMetadata(context);
 		} catch (IOException ex) {
 			Log.e(TAG, "Error loading TensorFlow module: " + ex.getMessage());
 			throw ex;
 		}
-		featureVector = new FeatureVector();
+		featureVector = new FeatureVector(metadata);
 		collectors = Arrays.asList(
 			new SensorCollector(context, samplingPeriod, featureVector),
 			new WifiCollector(context, scanInterval, featureVector),
@@ -75,6 +77,7 @@ public class IODetector implements Closeable
 		this(context, SensorManager.SENSOR_DELAY_NORMAL);
 	}
 
+	/* Get the list of required permissions for all the collectors. */
 	public static String[] getRequiredPermissions()
 	{
 		String[][] permissionMatrix = new String[5][];
@@ -96,6 +99,7 @@ public class IODetector implements Closeable
 		return permissions;
 	}
 
+	/* Starts all the collectors */
 	public void start()
 	{
 		for (FeatureCollector collector: collectors)
@@ -103,6 +107,7 @@ public class IODetector implements Closeable
 		started = true;
 	}
 
+	/* Performs an I/O detection with the last feature vector */
 	public IODetectionResult detect()
 	{
 		ByteBuffer buffer;
@@ -126,11 +131,15 @@ public class IODetector implements Closeable
 		return oldResult;
 	}
 
+	/* Sets the confidence threshold needed to consider the result of the detection as "validated" */
 	public static void setConfidenceThreshold(float threshold)
 	{
 		IODetectionResult.setConfidenceThreshold(threshold);
 	}
 
+	/* Registers a listeners for IODetection. The listener will be called periodically with
+	 * the specified interval with the last result of the detection.
+	 */
 	public void registerIODetectionListener(IODetectionListener listener, long detectInterval)
 	{
 		if (periodicHandler != null)
@@ -150,6 +159,7 @@ public class IODetector implements Closeable
 		periodicHandler.post(periodicRunnable);
 	}
 
+	/* Stops all the collectors and deregister the listener */
 	@Override
 	public void close()
 	{

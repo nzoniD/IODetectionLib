@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+/* Dummy class used to periodically receive Location updates.
+ * This is needed in order to force Android to periodically update the number of satellites in view.
+ */
 public class LocationReceiver implements LocationListener
 {
 	@Override

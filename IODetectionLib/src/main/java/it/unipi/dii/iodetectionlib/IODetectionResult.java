@@ -1,9 +1,10 @@
 package it.unipi.dii.iodetectionlib;
 
+/* Represents the result of the I/O Detection. */
 public class IODetectionResult
 {
 	private static final float FLOAT_COMPARISON_DELTA = 0.01f;
-	private static float confidenceThreshold = 0.2f;
+	private static float confidenceThreshold = 0.8f;
 	private final float value;
 	private final float validatedValue;
 
@@ -26,6 +27,7 @@ public class IODetectionResult
 		this(value, oldResult.getValidatedRawValue());
 	}
 
+	/* Sets the confidence threshold needed to set the ValidatedIOStatus */
 	public static void setConfidenceThreshold(float threshold)
 	{
 		confidenceThreshold = threshold;
@@ -43,6 +45,7 @@ public class IODetectionResult
 		return validatedValue;
 	}
 
+	/* Returns the last IOStatus detected */
 	public IOStatus getIOStatus()
 	{
 		if (Float.isNaN(value) || isDifferentFromUnknown(value))
@@ -50,6 +53,7 @@ public class IODetectionResult
 		return value > 0.5f ? IOStatus.INDOOR : IOStatus.OUTDOOR;
 	}
 
+	/* Returns the last IOStatus detected with a confidence above the threshold */
 	public IOStatus getValidatedIOStatus()
 	{
 		if (Float.isNaN(validatedValue) || isDifferentFromUnknown(validatedValue)
@@ -72,6 +76,7 @@ public class IODetectionResult
 		return Math.abs(validatedValue - 0.5f) * 2.0f;
 	}
 
+	/* Float comparison */
 	private static boolean isDifferentFromUnknown(float f1)
 	{
 		return (float) 0.5 > f1 - FLOAT_COMPARISON_DELTA && (float) 0.5 < f1 + FLOAT_COMPARISON_DELTA;

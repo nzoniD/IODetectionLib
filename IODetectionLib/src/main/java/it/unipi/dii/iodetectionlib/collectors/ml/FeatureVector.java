@@ -2,8 +2,6 @@ package it.unipi.dii.iodetectionlib.collectors.ml;
 
 import android.util.Log;
 
-import org.tensorflow.lite.support.model.Model;
-
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -11,13 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.unipi.dii.iodetectionlib.ml.IODetectorModel;
-
+/* A feature input vector for the TFLite model. */
 public class FeatureVector
 {
-	private final static float[] meanFeature = new float[] {2055.967f,2042.2388f,2889.998f,3765.9392f,516.74365f,3.1199863f,3.1646147f,12.936724f,8.249018f,663.32623f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f,0.0f};
-
-
+	/* Represents a time range with an associated FeatureId: DAYLIGHT, TWILIGHT, NIGHT */
 	private static class TimeRange
 	{
 		private final FeatureId featureId;
@@ -71,18 +66,22 @@ public class FeatureVector
 	);
 
 	private final HashMap<FeatureId, Feature> features;
+	private final Metadata metadata;
 
-	public FeatureVector()
+	public FeatureVector(Metadata metadata)
 	{
+		this.metadata = metadata;
 		features = new HashMap<>(FeatureId.values().length, 1);
 	}
 
+	/* Adds or updates a feature in the vector */
 	public void add(Feature feature)
 	{
 		features.put(feature.getFeatureId(), feature);
 		Log.d(TAG, "ADDED FEATURE: " + feature);
 	}
 
+	/* Returns the current FeatureId for the current time of day */
 	private static FeatureId getCurrentDayframeFeatureId()
 	{
 		for (TimeRange range: TIME_RANGES)
@@ -91,12 +90,14 @@ public class FeatureVector
 		return null;
 	}
 
+	/* Returns the feature vector */
 	public Map<FeatureId, Feature> getFeatureMap()
 	{
 		addDayframeFeatures();
 		return features;
 	}
 
+	/* Adds the DAYLIGHT,TWILIGHT,NIGHT features, based on current time */
 	public void addDayframeFeatures()
 	{
 		FeatureId curId = getCurrentDayframeFeatureId();
@@ -104,35 +105,36 @@ public class FeatureVector
 			add(new Feature(id, id == curId ? 1.0f : 0.0f));
 	}
 
+	/* Checks if there are at least the most important features to run the TFLite model */
 	public boolean hasRequiredFeatures()
 	{
 		addDayframeFeatures();
 		return features.containsKey(FeatureId.LUMINOSITY) && features.containsKey(FeatureId.PROXIMITY);
 	}
 
+	/* Returns the feature vector as a float array */
 	public float[] getFloatVector()
 	{
 		if (!hasRequiredFeatures())
 			throw new IllegalStateException("Required features not still available.");
 		float[] vector = new float[FeatureId.values().length];
-		int index = 0;
 		for (FeatureId id: FeatureId.values()) {
 			Feature feature = features.get(id);
-			float value = meanFeature[index];
+			float value = metadata.getFeatureVectorMean()[id.ordinal()];
 			if (feature != null)
 				value = feature.getValue();
 			else
-				Log.i(TAG, "Feature " + id.name() + " not available. Forcing to 0.");
+				Log.i(TAG, "Feature " + id.name() + " not available. Forcing to mean value (" + value + ").");
 			if (!Float.isFinite(value)) {
 				Log.w(TAG, "Non finite value (" + value + ") in normalized vector for feature " + id.name() + ". Forcing to 0.5.");
 				value = 0.5f;
 			}
-			vector[index] = value;
-			index++;
+			vector[id.ordinal()] = value;
 		}
 		return vector;
 	}
 
+	/* Returns the feature vector as a byte buffer */
 	public ByteBuffer toByteBuffer()
 	{
 		ByteBuffer byteBuffer = ByteBuffer.allocateDirect(FeatureId.values().length * (Float.SIZE/8));

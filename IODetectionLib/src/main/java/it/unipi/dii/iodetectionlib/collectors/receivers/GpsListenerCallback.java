@@ -4,6 +4,7 @@ import android.location.GnssStatus;
 
 import it.unipi.dii.iodetectionlib.collectors.receivers.interfaces.OnGpsUpdateListener;
 
+/* Receives GnssStatus updates from Android */
 public class GpsListenerCallback extends GnssStatus.Callback
 {
 	private final OnGpsUpdateListener callbackListener;
@@ -32,6 +33,7 @@ public class GpsListenerCallback extends GnssStatus.Callback
 
 	}
 
+	/* Called when a fix occurs */
 	@Override
 	public void onFirstFix(int ttffMillis)
 	{
@@ -39,6 +41,7 @@ public class GpsListenerCallback extends GnssStatus.Callback
 		callListener();
 	}
 
+	/* Called when the number of satellites in view changes */
 	@Override
 	public void onSatelliteStatusChanged(GnssStatus status)
 	{
@@ -51,7 +54,7 @@ public class GpsListenerCallback extends GnssStatus.Callback
 			return;
 		lastSatellites = satCount;
 		lastFixSatellites = fixCount;
-		callListener();
+		callListener(); /* Callback to the collector */
 	}
 
 	private void callListener()

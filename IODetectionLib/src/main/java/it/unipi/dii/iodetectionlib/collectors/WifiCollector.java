@@ -13,6 +13,7 @@ import it.unipi.dii.iodetectionlib.collectors.receivers.WifiCounterReceiver;
 import it.unipi.dii.iodetectionlib.collectors.receivers.interfaces.OnCounterUpdateListener;
 import it.unipi.dii.iodetectionlib.collectors.scanners.WifiScanner;
 
+/* Collects the number of WiFi access points in the neighbourhood */
 public class WifiCollector extends FeatureCollector implements OnCounterUpdateListener
 {
 	private final WifiScanner scanner;
@@ -44,6 +45,7 @@ public class WifiCollector extends FeatureCollector implements OnCounterUpdateLi
 		context.unregisterReceiver(wifiReceiver);
 	}
 
+	/* Called by WifiCounterReiceiver. */
 	@Override
 	public void onCounterUpdate(int value)
 	{

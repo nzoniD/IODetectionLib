@@ -9,6 +9,7 @@ import android.util.Log;
 
 import it.unipi.dii.iodetectionlib.collectors.ml.FeatureVector;
 
+/* Collects data for light and proximity */
 public class SensorCollector extends FeatureCollector implements SensorEventListener
 {
 	private static final String TAG = SensorCollector.class.getName();
@@ -23,6 +24,7 @@ public class SensorCollector extends FeatureCollector implements SensorEventList
 	@Override
 	public void start()
 	{
+		/* Register listeners (this) for light and proximity */
 		Sensor lightSensor = manager.getDefaultSensor(Sensor.TYPE_LIGHT);
 		if (lightSensor == null)
 			Log.e(TAG, "Device does not have a light sensor!");
@@ -41,6 +43,7 @@ public class SensorCollector extends FeatureCollector implements SensorEventList
 		manager.unregisterListener(this);
 	}
 
+	/* Called by Android when there is a new sensor event */
 	@Override
 	public void onSensorChanged(SensorEvent event)
 	{

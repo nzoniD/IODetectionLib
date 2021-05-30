@@ -18,6 +18,7 @@ import it.unipi.dii.iodetectionlib.collectors.receivers.interfaces.OnGpsUpdateLi
 
 import static android.content.Context.LOCATION_SERVICE;
 
+/* Collects data from GPS */
 public class GpsCollector extends FeatureCollector implements OnGpsUpdateListener
 {
 	private final LocationManager manager;
@@ -48,6 +49,9 @@ public class GpsCollector extends FeatureCollector implements OnGpsUpdateListene
 		manager.unregisterGnssStatusCallback(callback);
 	}
 
+	/* Updates the current number of GPS satellites and the time from last fix.
+	 * Called by GpsListenerCallback.
+	 */
 	@Override
 	public void onGpsUpdate(int satellites, long lastFixMillis, int fixSatellites)
 	{

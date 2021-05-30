@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
+/* Periodically scan for WiFi access points */
 public class WifiScanner extends PeriodicScanner
 {
 	private static final String TAG = WifiScanner.class.getName();

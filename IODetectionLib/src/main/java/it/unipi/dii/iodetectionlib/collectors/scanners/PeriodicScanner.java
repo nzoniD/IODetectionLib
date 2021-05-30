@@ -3,6 +3,7 @@ package it.unipi.dii.iodetectionlib.collectors.scanners;
 import android.os.Handler;
 import android.os.Looper;
 
+/* Base class for a periodic scanner */
 public abstract class PeriodicScanner
 {
 	private final Handler handler;
@@ -47,5 +48,6 @@ public abstract class PeriodicScanner
 		handler.removeCallbacks(runnable);
 	}
 
+	/* Called periodically */
 	abstract void scan();
 }

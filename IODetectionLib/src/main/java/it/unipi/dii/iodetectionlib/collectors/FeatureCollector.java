@@ -15,6 +15,7 @@ import it.unipi.dii.iodetectionlib.collectors.ml.Feature;
 import it.unipi.dii.iodetectionlib.collectors.ml.FeatureId;
 import it.unipi.dii.iodetectionlib.collectors.ml.FeatureVector;
 
+/* Base class for collectors */
 public abstract class FeatureCollector
 {
 	protected final Context context;
@@ -36,6 +37,9 @@ public abstract class FeatureCollector
 		this.lastLuminosity30sFar = new HashMap<>();
 	}
 
+	/* Updates a feature in the featureVector.
+	 * Elapsed time are updated each time this method is called.
+	 */
 	protected void collect(Feature feature)
 	{
 		featureVector.add(new Feature(FeatureId.TIME_FROM_LAST_FAR, (float)(System.currentTimeMillis() - lastFarTime)/1000));
@@ -43,6 +47,7 @@ public abstract class FeatureCollector
 		featureVector.add(feature);
 	}
 
+	/* Cleanup the history for luminosity (used to compute last 30 seconds mean) */
 	private void historyCleanup()
 	{
 		Map<Long, Float> map = isFar ? lastLuminosity30sFar : lastLuminosity30s;
@@ -54,6 +59,7 @@ public abstract class FeatureCollector
 			map.remove(key);
 	}
 
+	/* Returns the mean the values in the map object. */
 	private static float getMean(Map<Long, Float> map)
 	{
 		if (map.size() == 0)
@@ -64,17 +70,22 @@ public abstract class FeatureCollector
 		return sum / (float)map.size();
 	}
 
+	/* Collect a luminosity feature. It computes also all features derivated by the
+	 * luminosity (like the last 30s mean).
+	 */
 	protected void collectLuminosity(long timestamp, float luminosity)
 	{
 		timestamp = System.currentTimeMillis() - (SystemClock.elapsedRealtimeNanos() - timestamp)/(1000*1000);
+		/* Add luminosity value to history for computing the mean */
 		lastLuminosity30s.put(timestamp, luminosity);
 		if (isFar) {
 			lastLuminosity30sFar.put(timestamp, luminosity);
 			lastLuminosityFar = luminosity;
 			lastFarTime = timestamp;
 		}
-		historyCleanup();
+		historyCleanup(); /* Remove too old values from history */
 		collect(new Feature(FeatureId.LUMINOSITY, luminosity));
+		/* Derivated features */
 		if (!Float.isNaN(lastLuminosityFar))
 			collect(new Feature(FeatureId.LAST_LUMINOSITY_WHEN_FAR, lastLuminosityFar));
 		float mean = getMean(lastLuminosity30s);
@@ -89,6 +100,7 @@ public abstract class FeatureCollector
 		}
 	}
 
+	/* Collect a proximity feature. */
 	protected void collectProximity(float proximity)
 	{
 		if (proximity > 0.1)
@@ -97,6 +109,7 @@ public abstract class FeatureCollector
 		collect(new Feature(FeatureId.PROXIMITY, proximity));
 	}
 
+	/* Sets the last time a GPS fix occured */
 	protected void setLastGpsFix(long lastFixTime)
 	{
 		this.lastFixTime = lastFixTime;
@@ -105,11 +118,13 @@ public abstract class FeatureCollector
 	abstract public void start();
 	abstract public void stop();
 
+	/* Checks that the permissions required by the collectors are granted */
 	protected boolean checkPermission(String permission)
 	{
 		return ActivityCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
 	}
 
+	/* Throws an exception if a required permission is not granted */
 	protected void assertPermissions(String[] permissions)
 	{
 		for (String permission: permissions)

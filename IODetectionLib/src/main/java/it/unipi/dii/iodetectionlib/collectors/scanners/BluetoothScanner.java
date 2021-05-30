@@ -3,6 +3,7 @@ package it.unipi.dii.iodetectionlib.collectors.scanners;
 import android.bluetooth.BluetoothAdapter;
 import android.util.Log;
 
+/* Periodically scan for BT devices */
 public class BluetoothScanner extends PeriodicScanner
 {
 	private static final String TAG = BluetoothScanner.class.getName();

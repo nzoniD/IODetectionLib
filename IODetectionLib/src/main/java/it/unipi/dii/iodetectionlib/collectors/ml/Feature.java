@@ -1,5 +1,6 @@
 package it.unipi.dii.iodetectionlib.collectors.ml;
 
+/* Represents a feature */
 public class Feature
 {
 	private final FeatureId id;
